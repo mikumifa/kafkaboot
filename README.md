@@ -1,49 +1,54 @@
-# kafka消息处理模版
- 中文| [English](README_en.md)
-> 简单易用的高性能，欢迎提出修改建议
+# Kafka Message Processing Template
 
-## 功能特性
+[中文](README_zh.md) | English
 
-### 1.简单易用
+> Simple and easy-to-use high-performance template for Kafka message processing. Suggestions for modifications are
+> welcome.
 
-使用springboot进行管理，只需完成业务实现，就能完成对于kafka的消息处理
+## Features
 
-### 2.高性能
+### 1. Simple and Easy-to-Use
 
-根据topic分发消息到消息队列，并进行异步处理消息
+Managed by Spring Boot, simply implement your business logic to handle Kafka messages effortlessly.
 
-## 如何使用
+### 2. High Performance
 
-假设你需要对topic名为`create-news`的消息进行处理，你可以按照一下步骤
+Distributes messages to message queues based on topics and asynchronously processes them.
 
-#### 1. 定义topic
+## How to Use
 
-在config包中定义channel，其中`@ChannelBean`注解表示这个channel对应的`topic`的名字
+Suppose you need to process messages from a topic named `create-news`. Follow these steps:
+
+#### 1. Define Topic
+
+Define a channel in the config package, where the `@ChannelBean` annotation indicates the name of the corresponding
+topic.
 
 ```java
-    @ChannelBean("create-news")
-    public Channel createchannel() {
+@ChannelBean("create-news")
+public Channel createChannel(){
         return new MemoryChannel();
-    }
+        }
 ```
 
-#### 2. 定义MessageProcesser
+#### 2. Define Message Processor
 
-在config包中定义MessageProcesser
+Define a MessageProcessor in the config package.
 
 ```java
-  @ProcesserBean("create-news-processor")
-    public MessageProcesser createchannel(@Qualifier("create-news") Channel channel) {
-        return new StringMessageProcesser(channel);
-    }
+@ProcessorBean("create-news-processor")
+public MessageProcessor createChannel(@Qualifier("create-news") Channel channel){
+        return new StringMessageProcessor(channel);
+        }
 ```
 
-#### 3.实现MessageReceiver
+#### 3. Implement Message Receiver
 
-在service包里MessageReceiver的实现，然后通过`@Sink`注解绑定channel
+Implement MessageReceiver in the service package, then bind it to the channel using the `@Sink` annotation.
 
 ```java
-@Component()
+
+@Component
 @Slf4j
 @Sink(bindTo = "create-news")
 @RequiredArgsConstructor
@@ -53,6 +58,4 @@ public class NewsSaveToESSink implements MessageReceiver {
         log.info("NewsSaveToESSink");
     }
 }
-
 ```
-
